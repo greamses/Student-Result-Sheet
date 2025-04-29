@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Result</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  
+  <style>
+  input{
+    text-align: center;
+    padding: 4px 0;
+  }
+  
+  input[type="date"]{
+    width: 120px;
+  }
+  
+  textarea{
+    padding: 10px;
+  }
+  
+  button{
+    width: 180px;
+    margin: 0 10px;
+  }
+  
+  
+  
+    @media print {
+  button, #savedResultsSection {
+    display: none;
+  }
+
+  #resultSection {
+    page-break-before: always;
+  }
+}
+  </style>
+</head>
+
+<body class="bg-gray-100 text-gray-900 font-sans">
+  <!-- Input Form Section -->
+  <div id="inputFormSection" class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-lg my-8">
+    <h1 class="text-2xl font-bold mb-6 text-blue-600">Input Form</h1>
+    <form id="resultForm">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label for="schoolLogo" class="block text-sm font-medium text-gray-700">School Logo</label>
+          <input type="file" id="schoolLogo" accept="image/*" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+          <img id="schoolLogoPreview" class="mt-2 h-24 hidden">
+        </div>
+
+        <div>
+          <label for="schoolName" class="block text-sm font-medium text-gray-700">School Name</label>
+          <input type="text" id="schoolName" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+        </div>
+
+        <div>
+          <label for="studentImage" class="block text-sm font-medium text-gray-700">Student Image</label>
+          <input type="file" id="studentImage" accept="image/*" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+          <img id="studentImagePreview" class="mt-2 h-24 hidden">
+        </div>
+
+        <div>
+          <label for="studentName" class="block text-sm font-medium text-gray-700">Student Name</label>
+          <input type="text" id="studentName" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+        </div>
+
+        <div>
+          <label for="class" class="block text-sm font-medium text-gray-700">Class</label>
+          <input type="text" id="class" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+        </div>
+
+        <div>
+          <label for="session" class="block text-sm font-medium text-gray-700">Session</label>
+          <input type="text" id="session" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+        </div>
+
+        <div>
+          <label for="term" class="block text-sm font-medium text-gray-700">Term</label>
+          <input type="text" id="term" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+        </div>
+      </div>
+
+      <div id="subjectsContainer" class="mt-6">
+        <h2 class="text-xl font-bold mb-4">Subjects</h2>
+   <div class="grid grid-cols-2 lg:grid-cols-3 sm:grid-cols-5 gap-4 mb-4">
+  <input type="text" placeholder="Subject Name" class="subject-name col-span-2 md:col-span-1 border-gray-300 rounded-lg shadow-sm">
+  <input type="number" placeholder="Research (10%)" class="research-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+  <input type="number" placeholder="Project (20%)" class="project-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+  <input type="number" placeholder="Test (30%)" class="test-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+  <input type="number" placeholder="Exam (40%)" class="exam-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+</div>
+      </div>
+
+      <button type="button" id="addSubject" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700">Add  Subject</button>
+
+      <div class="mt-6 grid grid-cols-1 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Class Teacher's Remarks</label>
+          <textarea id="teacherRemarks" rows="2" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" placeholder="Enter class teacher's remarks"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Principal's Remarks</label>
+          <textarea id="principalRemarks" rows="2" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm" placeholder="Enter principal's remarks"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Next Term Begins</label>
+            <input type="date" id="nextTermDate" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Date of Result</label>
+            <input type="date" id="resultDate" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm">
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-4 mt-6">
+        <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700">Generate</button>
+        <button type="button" id="saveButton" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Result Section -->
+  <div id="resultSection" class="hidden max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <div class="grid grid-cols-3 gap-6 mb-8 pb-4 border-b-2 border-gray-300">
+      <div class="flex justify-center items-center">
+        <img id="resultSchoolLogo" class="h-24 object-contain">
+      </div>
+      <div class="text-center col-span-1">
+        <h1 id="resultSchoolName" class="text-3xl font-bold text-blue-600">School Name</h1>
+        <h2 class="text-xl text-gray-600">Result Sheet</h2>
+      </div>
+      <div class="flex justify-center items-center">
+        <img id="resultStudentImage" class="h-24 object-contain">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-gray-50 p-6 rounded-lg shadow-md">
+      <div>
+        <span class="font-semibold text-blue-600">Student Name:</span>
+        <span id="resultStudentName"></span>
+      </div>
+      <div>
+        <span class="font-semibold text-blue-600">Class:</span>
+        <span id="resultClass"></span>
+      </div>
+      <div>
+        <span class="font-semibold text-blue-600">Session:</span>
+        <span id="resultSession"></span>
+      </div>
+      <div>
+        <span class="font-semibold text-blue-600">Term:</span>
+        <span id="resultTerm"></span>
+      </div>
+    </div>
+
+    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+      <h3 class="text-lg font-bold text-blue-600 mb-2">Grading System</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 text-sm">
+        <div>A+ (90-100): Excellent</div>
+        <div>A (80-89): Very Good</div>
+        <div>B (70-79): Good</div>
+        <div>C (60-69): Fair</div>
+        <div>D (50-59): Pass</div>
+        <div>F (0-49): Fail</div>
+      </div>
+    </div>
+
+<div class="table-container overflow-x-auto">
+  <table class="w-full table-auto border-collapse mb-8">
+    <thead>
+      <tr class="bg-blue-600 text-white">
+        <th class="py-3 px-4">Subject</th>
+        <th class="py-3 px-4">Research (10%)</th>
+        <th class="py-3 px-4">Project (20%)</th>
+        <th class="py-3 px-4">Test (30%)</th>
+        <th class="py-3 px-4">Exam (40%)</th>
+        <th class="py-3 px-4">Total</th>
+        <th class="py-3 px-4">Grade</th>
+        <th class="py-3 px-4">Remark</th>
+      </tr>
+    </thead>
+    <tbody id="gradesTableBody"></tbody>
+    <tfoot id="gradesTotalRow" class="bg-gray-100 font-bold"></tfoot>
+  </table>
+</div>
+
+    <canvas id="resultChart" class="mb-8"></canvas>
+
+    <div id="remarksSection" class="mb-8"></div>
+
+    <div class="flex justify-between items-center">
+      <button class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700" onclick="window.print()">Print</button>
+      <button class="bg-gray-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-700" onclick="location.reload()">New</button>
+    </div>
+  </div>
+
+  <div id="savedResultsSection" class="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-lg my-8">
+    <h2 class="text-2xl font-bold mb-6 text-blue-600">Saved Results</h2>
+    <div id="savedResultsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    </div>
+  </div>
+  <script>// Preview images when selected
+document.getElementById('schoolLogo').addEventListener('change', function(e) {
+  const preview = document.getElementById('schoolLogoPreview');
+  if (e.target.files && e.target.files[0]) {
+    preview.src = URL.createObjectURL(e.target.files[0]);
+    preview.classList.remove('hidden');
+  }
+});
+
+document.getElementById('studentImage').addEventListener('change', function(e) {
+  const preview = document.getElementById('studentImagePreview');
+  if (e.target.files && e.target.files[0]) {
+    preview.src = URL.createObjectURL(e.target.files[0]);
+    preview.classList.remove('hidden');
+  }
+});
+
+// Modify the Add new subject row function to include a delete button
+document.getElementById('addSubject').addEventListener('click', () => {
+  const container = document.getElementById('subjectsContainer');
+  const subjectRow = `
+   <div class="grid grid-cols-2 lg:grid-cols-3 sm:grid-cols-6 gap-4 mb-4 items-center subject-row">
+     <input type="text" placeholder="Subject Name" class="subject-name col-span-2 md:col-span-1 border-gray-300 rounded-lg shadow-sm">
+     <input type="number" placeholder="Research (10%)" class="research-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+     <input type="number" placeholder="Project (20%)" class="project-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+     <input type="number" placeholder="Test (30%)" class="test-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+     <input type="number" placeholder="Exam (40%)" class="exam-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+     <button type="button" onclick="removeSubject(this)" class="text-red-600 hover:text-red-800 focus:outline-none">
+       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+       </svg>
+     </button>
+   </div>
+    `;
+  container.insertAdjacentHTML('beforeend', subjectRow);
+});
+
+// Add remove subject function
+function removeSubject(button) {
+  if (confirm('Are you sure you want to remove this subject?')) {
+    const subjectRow = button.closest('.subject-row');
+    subjectRow.remove();
+  }
+}
+
+// Calculate grade based on total score
+function calculateGrade(total) {
+  if (total >= 90) return 'A+';
+  if (total >= 80) return 'A';
+  if (total >= 70) return 'B';
+  if (total >= 60) return 'C';
+  if (total >= 50) return 'D';
+  return 'F';
+}
+
+// Get grade remark
+function getGradeRemark(grade) {
+  const remarks = {
+    'A+': 'Excellent',
+    'A': 'Very Good',
+    'B': 'Good',
+    'C': 'Fair',
+    'D': 'Pass',
+    'F': 'Fail'
+  };
+  return remarks[grade];
+}
+
+// Format dates
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+}
+
+document.getElementById('saveButton').addEventListener('click', () => {
+  const formData = getFormData();
+  if (!formData.studentName) {
+    alert('Please enter student name before saving');
+    return;
+  }
+  saveResultData(formData);
+  alert('Result saved successfully!');
+});
+
+function getFormData() {
+  const schoolName = document.getElementById('schoolName').value;
+  const studentName = document.getElementById('studentName').value;
+  const className = document.getElementById('class').value;
+  const session = document.getElementById('session').value;
+  const term = document.getElementById('term').value;
+  const teacherRemarks = document.getElementById('teacherRemarks').value;
+  const principalRemarks = document.getElementById('principalRemarks').value;
+  const nextTermDate = document.getElementById('nextTermDate').value;
+  const resultDate = document.getElementById('resultDate').value;
+
+  const subjects = Array.from(document.querySelectorAll('.subject-name')).map((input, index) => ({
+    name: input.value,
+    research: Number(document.querySelectorAll('.research-score')[index].value) || 0,
+    project: Number(document.querySelectorAll('.project-score')[index].value) || 0,
+    test: Number(document.querySelectorAll('.test-score')[index].value) || 0,
+    exam: Number(document.querySelectorAll('.exam-score')[index].value) || 0,
+  }));
+
+  return {
+    schoolName,
+    studentName,
+    className,
+    session,
+    term,
+    teacherRemarks,
+    principalRemarks,
+    nextTermDate,
+    resultDate,
+    subjects
+  };
+}
+
+// Handle form submission
+document.getElementById('resultForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      // Get form data
+      const formData = getFormData();
+
+      // Hide form and show results
+      document.getElementById('inputFormSection').classList.add('hidden');
+      document.getElementById('resultSection').classList.remove('hidden');
+
+      // Set school logo and name
+      document.getElementById('resultSchoolLogo').src = document.getElementById('schoolLogoPreview').src;
+      document.getElementById('resultSchoolName').textContent = formData.schoolName;
+
+      // Set student image and details
+      document.getElementById('resultStudentImage').src = document.getElementById('studentImagePreview').src;
+      document.getElementById('resultStudentName').textContent = formData.studentName;
+      document.getElementById('resultClass').textContent = formData.className;
+      document.getElementById('resultSession').textContent = formData.session;
+      document.getElementById('resultTerm').textContent = formData.term;
+
+      // Generate results table
+      const tableBody = document.getElementById('gradesTableBody');
+      tableBody.innerHTML = '';
+
+      const chartLabels = [];
+      const chartScores = [];
+      let totalScore = 0;
+      let subjectCount = 0;
+
+      formData.subjects.forEach(subject => {
+        const total = subject.research + subject.project + subject.test + subject.exam;
+        const grade = calculateGrade(total);
+        const remark = getGradeRemark(grade);
+        totalScore += total;
+        subjectCount++;
+
+        chartLabels.push(subject.name);
+        chartScores.push(total);
+
+        tableBody.innerHTML += `
+        <tr class="border-b hover:bg-gray-50">
+            <td class="py-3 px-4">${subject.name}</td>
+            <td class="py-3 px-4 text-center">${subject.research}</td>
+            <td class="py-3 px-4 text-center">${subject.project}</td>
+            <td class="py-3 px-4 text-center">${subject.test}</td>
+            <td class="py-3 px-4 text-center">${subject.exam}</td>
+            <td class="py-3 px-4 text-center font-bold">${total}</td>
+            <td class="py-3 px-4 text-center font-bold">${grade}</td>
+            <td class="py-3 px-4 text-center">${remark}</td>
+        </tr>`;
+      });
+
+      // Calculate and add total/average row
+      const average = totalScore / subjectCount;
+      const overallGrade = calculateGrade(average);
+      const overallRemark = getGradeRemark(overallGrade);
+
+      document.getElementById('gradesTotalRow').innerHTML = `
+        <tr>
+            <td colspan="5" class="py-3 px-4 text-right">Total Score:</td>
+            <td class="py-3 px-4 text-center font-bold">${totalScore}</td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td colspan="5" class="py-3 px-4 text-right">Average Score:</td>
+            <td class="py-3 px-4 text-center font-bold">${average.toFixed(2)}</td>
+            <td class="py-3 px-4 text-center font-bold">${overallGrade}</td>
+            <td class="py-3 px-4 text-center">${overallRemark}</td>
+        </tr>`;
+
+      // Generate remarks section
+      document.getElementById('remarksSection').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="border rounded-lg p-4">
+                <h3 class="font-bold text-blue-600 mb-2">Class Teacher's Remarks</h3>
+                <p>${formData.teacherRemarks || 'No remarks provided'}</p>
+            </div>
+            <div class="border rounded-lg p-4">
+                <h3 class="font-bold text-blue-600 mb-2">Principal's Remarks</h3>
+                <p>${formData.principalRemarks || 'No remarks provided'}</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <span class="font-bold text-blue-600">Next Term Begins:</span>
+                <span>${formatDate(formData.nextTermDate)}</span>
+            </div>
+            <div>
+                <span class="font-bold text-blue-600">Date of Result:</span>
+                <span>${formatDate(formData.resultDate)}</span>
+            </div>
+        </div>`;
+
+      // Generate chart
+      const ctx = document.getElementById('resultChart').getContext('2d');
+      new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: chartLabels,
+              datasets: [{
+                    label: 'Subject Scores',
+                    data: chartScores,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+  borderColor: 'rgba(54, 162, 235, 1)',
+  borderWidth: 1,
+}]
+},
+options: {
+responsive: true,
+plugins: {
+  legend: {
+    display: false,
+  },
+  tooltip: {
+    callbacks: {
+      label: function(context) {
+        return `Score: ${context.raw}`;
+      }
+    }
+  }
+},
+scales: {
+  y: {
+    beginAtZero: true,
+    ticks: {
+      stepSize: 10,
+    },
+    title: {
+      display: true,
+      text: 'Scores',
+    }
+  },
+  x: {
+    title: {
+      display: true,
+      text: 'Subjects',
+    }
+  }
+}
+}
+});
+})
+
+// Save result data to local storage
+function saveResultData(data) {
+  const savedResults = JSON.parse(localStorage.getItem('studentResults') || '{}');
+  savedResults[data.studentName] = data;
+  localStorage.setItem('studentResults', JSON.stringify(savedResults));
+  displaySavedResults();
+}
+
+// Update the loadSavedResult function to include delete buttons
+function loadSavedResult(studentName) {
+  const savedResults = JSON.parse(localStorage.getItem('studentResults') || '{}');
+  const data = savedResults[studentName];
+
+  if (data) {
+    document.getElementById('schoolName').value = data.schoolName;
+    document.getElementById('studentName').value = data.studentName;
+    document.getElementById('class').value = data.className;
+    document.getElementById('session').value = data.session;
+    document.getElementById('term').value = data.term;
+    document.getElementById('teacherRemarks').value = data.teacherRemarks;
+    document.getElementById('principalRemarks').value = data.principalRemarks;
+    document.getElementById('nextTermDate').value = data.nextTermDate;
+    document.getElementById('resultDate').value = data.resultDate;
+
+    const subjectsContainer = document.getElementById('subjectsContainer');
+    subjectsContainer.innerHTML = '';
+    data.subjects.forEach(subject => {
+      const subjectRow = `
+        <div class="grid grid-cols-2 lg:grid-cols-3 sm:grid-cols-6 gap-4 mb-4 items-center subject-row">
+          <input type="text" value="${subject.name}" placeholder="Subject Name" class="subject-name col-span-2 md:col-span-1 border-gray-300 rounded-lg shadow-sm">
+          <input type="number" value="${subject.research}" placeholder="Research (10%)" class="research-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+          <input type="number" value="${subject.project}" placeholder="Project (20%)" class="project-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+          <input type="number" value="${subject.test}" placeholder="Test (30%)" class="test-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+          <input type="number" value="${subject.exam}" placeholder="Exam (40%)" class="exam-score col-span-1 border-gray-300 rounded-lg shadow-sm">
+          <button type="button" onclick="removeSubject(this)" class="text-red-600 hover:text-red-800 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        `;
+      subjectsContainer.insertAdjacentHTML('beforeend', subjectRow);
+    });
+
+    alert(`Result for ${studentName} loaded successfully!`);
+  } else {
+    alert(`No saved result found for ${studentName}.`);
+  }
+}
+
+
+// Delete result data from local storage
+function deleteResult(studentName) {
+  if (confirm(`Are you sure you want to delete the result for ${studentName}?`)) {
+    const savedResults = JSON.parse(localStorage.getItem('studentResults') || '{}');
+    if (savedResults[studentName]) {
+      delete savedResults[studentName];
+      localStorage.setItem('studentResults', JSON.stringify(savedResults));
+      displaySavedResults(); // Refresh the list
+      alert(`Result for ${studentName} deleted successfully!`);
+    } else {
+      alert(`No saved result found for ${studentName}.`);
+    }
+  }
+}
+
+
+// Updated displaySavedResults function with delete button
+function displaySavedResults() {
+  const savedResults = JSON.parse(localStorage.getItem('studentResults') || '{}');
+  const savedResultsContainer = document.getElementById('savedResultsSection');
+  savedResultsContainer.innerHTML = '';
+
+  Object.keys(savedResults).forEach(studentName => {
+    const result = savedResults[studentName];
+    const listItem = `
+      <li class="py-2 px-4 border-b flex justify-between items-center">
+        <span class="text-gray-700">${studentName} (${result.className}, ${result.session}, ${result.term})</span>
+<div class="flex flex-col sm:flex-row gap-3">
+    <button 
+        onclick="loadSavedResult('${studentName}')" 
+        class="text-blue-600 hover:text-blue-800 transition-colors duration-200">
+        Load
+    </button>
+    <button 
+        onclick="deleteResult('${studentName}')" 
+        class="text-red-600 hover:text-red-800 transition-colors duration-200">
+        Delete
+    </button>
+</div>
+      </li>`;
+    savedResultsContainer.insertAdjacentHTML('beforeend', listItem);
+  });
+
+  // Add a "no results" message if there are no saved results
+  if (Object.keys(savedResults).length === 0) {
+    savedResultsContainer.innerHTML = `
+      <li class="py-4 px-4 text-center text-gray-500">
+        No saved results found
+      </li>`;
+  }
+}
+
+// Initialize saved results on page load
+document.addEventListener('DOMContentLoaded', displaySavedResults);
+</script>
+</body>
+
+</html>
